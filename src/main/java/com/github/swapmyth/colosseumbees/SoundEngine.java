@@ -24,9 +24,13 @@ public class SoundEngine
 	private final List<Clip> activeClips = new CopyOnWriteArrayList<>();
 
 	/**
-	 * Play a sound in a continuous loop. Returns the Clip handle so it can be stopped later.
+	 * Play a sound in a continuous loop with a volume multiplier.
+	 * Returns the Clip handle so it can be stopped later.
+	 *
+	 * @param sound the sound to play
+	 * @param volumeMultiplier multiplier applied to the config volume (e.g. 0.25 for 25%)
 	 */
-	public Clip playLoopingClip(Sound sound)
+	public Clip playLoopingClip(Sound sound, float volumeMultiplier)
 	{
 		File soundFile = SoundFileManager.getSoundFile(sound);
 		if (soundFile == null || !soundFile.exists())
@@ -41,11 +45,12 @@ public class SoundEngine
 			Clip clip = AudioSystem.getClip();
 			clip.open(audioStream);
 
-			// Apply volume from config
+			// Apply volume from config, scaled by the layer multiplier
 			if (clip.isControlSupported(FloatControl.Type.MASTER_GAIN))
 			{
 				FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-				float gain = 20f * (float) Math.log10(config.announcementVolume() / 100f);
+				float effectiveVolume = (config.announcementVolume() / 100f) * volumeMultiplier;
+				float gain = 20f * (float) Math.log10(Math.max(effectiveVolume, 0.0001f));
 				gain = Math.max(gain, gainControl.getMinimum());
 				gain = Math.min(gain, gainControl.getMaximum());
 				gainControl.setValue(gain);
