@@ -32,9 +32,6 @@ public class ColosseumBeesPlugin extends Plugin
 	private SoundEngine soundEngine;
 
 	@Inject
-	private ColosseumBeesConfig config;
-
-	@Inject
 	private ScheduledExecutorService executor;
 
 	@Inject

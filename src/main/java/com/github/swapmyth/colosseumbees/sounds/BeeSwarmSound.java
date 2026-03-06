@@ -181,6 +181,8 @@ public class BeeSwarmSound
 			case CONNECTION_LOST:
 				cleanup();
 				break;
+			default:
+				break;
 		}
 	}
 
